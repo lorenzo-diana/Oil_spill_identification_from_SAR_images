@@ -32,5 +32,11 @@ python3 generate_oil_dataset.py
 python3 train_model.py
 ```
 
+Use test_model.py to test the trained model.
+Use the help option to learn the relevant parameters:
+```
+python3 test_model.py -h
+```
+
 The following image (taken from the original paper) shows an example of CNN's input, ground truth, and output.
 ![Example of input, output, and ground truth of the CNN. Image taken from the original paper](https://www.mdpi.com/remotesensing/remotesensing-13-03606/article_deploy/html/images/remotesensing-13-03606-g004.png)
