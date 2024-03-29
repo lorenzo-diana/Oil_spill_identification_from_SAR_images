@@ -6,4 +6,5 @@ num_samples=$(ls ./dataset/train_tile_aug/ | wc -l)
 head -n $(($num_samples*$training_set_size/100)) ./temp_list > ./train_set.txt
 tail -n $(($num_samples*$validation_set_size/100)) ./temp_list > ./validation_set.txt
 rm ./temp_list
-ls ./dataset/test_tile_aug/ > ./test_set.txt
+#ls ./dataset/test_tile_aug/ > ./test_set.txt
+ls ./dataset/test_tile/ > ./test_set.txt

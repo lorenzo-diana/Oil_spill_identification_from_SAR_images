@@ -101,6 +101,8 @@ def gen_flip_label(in_folder, out_folder):
 
 if __name__ == "__main__":
     print('Start...')
+
+    augment_test_data = False
     
     ORIGINAL_DATASET_FOLDER       = './dataset/original_data/'
     PREPROCESSED_DATASET_FOLDER   = './dataset/'
@@ -120,8 +122,9 @@ if __name__ == "__main__":
     TEST_ORIGINAL_INPUT_PATH      = ORIGINAL_DATASET_FOLDER + 'test/images/'
     TEST_TILE_LABEL_PATH          = PREPROCESSED_DATASET_FOLDER + 'test_label_tile/'
     TEST_TILE_INPUT_PATH          = PREPROCESSED_DATASET_FOLDER + 'test_tile/'
-    TEST_AUGMENTED_LABEL_PATH     = PREPROCESSED_DATASET_FOLDER + 'test_label_tile_aug/'
-    TEST_AUGMENTED_INPUT_PATH     = PREPROCESSED_DATASET_FOLDER + 'test_tile_aug/'
+    if (augment_test_data == True):
+        TEST_AUGMENTED_LABEL_PATH     = PREPROCESSED_DATASET_FOLDER + 'test_label_tile_aug/'
+        TEST_AUGMENTED_INPUT_PATH     = PREPROCESSED_DATASET_FOLDER + 'test_tile_aug/'
     
     try:
         os.makedirs(TRAIN_CONVERTED_LABEL_PATH, exist_ok=True)
@@ -133,8 +136,9 @@ if __name__ == "__main__":
         os.makedirs(TEST_CONVERTED_LABEL_PATH, exist_ok=True)
         os.makedirs(TEST_TILE_LABEL_PATH, exist_ok=True)
         os.makedirs(TEST_TILE_INPUT_PATH, exist_ok=True)
-        os.makedirs(TEST_AUGMENTED_LABEL_PATH, exist_ok=True)
-        os.makedirs(TEST_AUGMENTED_INPUT_PATH, exist_ok=True)
+        if (augment_test_data == True):
+            os.makedirs(TEST_AUGMENTED_LABEL_PATH, exist_ok=True)
+            os.makedirs(TEST_AUGMENTED_INPUT_PATH, exist_ok=True)
     except Exception as ex:
         print(ex)
         exit(-1)
@@ -164,10 +168,11 @@ if __name__ == "__main__":
     gen_label_5D_320_overlap(TEST_CONVERTED_LABEL_PATH, TEST_TILE_LABEL_PATH)
     print('Gen test label 320 overlap done.')
     # data augmentation is done during pre-processing
-    gen_flip_img(TEST_TILE_INPUT_PATH, TEST_AUGMENTED_INPUT_PATH)
-    print('Test img flip done.')
-    gen_flip_label(TEST_TILE_LABEL_PATH, TEST_AUGMENTED_LABEL_PATH)
-    print('Test label flip done.')
+    if (augment_test_data == True):
+        gen_flip_img(TEST_TILE_INPUT_PATH, TEST_AUGMENTED_INPUT_PATH)
+        print('Test img flip done.')
+        gen_flip_label(TEST_TILE_LABEL_PATH, TEST_AUGMENTED_LABEL_PATH)
+        print('Test label flip done.')
     
     try:
         shutil.rmtree(TRAIN_CONVERTED_LABEL_PATH, ignore_errors=True)
@@ -175,8 +180,9 @@ if __name__ == "__main__":
         shutil.rmtree(TRAIN_TILE_INPUT_PATH, ignore_errors=True)
 
         shutil.rmtree(TEST_CONVERTED_LABEL_PATH, ignore_errors=True)
-        shutil.rmtree(TEST_TILE_LABEL_PATH, ignore_errors=True)
-        shutil.rmtree(TEST_TILE_INPUT_PATH, ignore_errors=True)
+        if (augment_test_data == True):
+            shutil.rmtree(TEST_TILE_LABEL_PATH, ignore_errors=True)
+            shutil.rmtree(TEST_TILE_INPUT_PATH, ignore_errors=True)
     except Exception as ex:
         print(ex)
         exit(-1)

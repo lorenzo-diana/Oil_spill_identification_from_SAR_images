@@ -16,19 +16,19 @@ import oil_spill_model as my_model
 
 
 BATCH     = 4
-BATCH_VAL = 4 #16
+BATCH_VAL = 16
 lrate     = 0.002
-EPOCHS    = 3 #50
+EPOCHS    = 50
 PATIENCE  = 10
 
 # this folder will contain the history of the trained model
-HISTORY_FOLDER = './history_trained/'
+HISTORY_FOLDER      = './history_trained/'
 # this folder will contain the plot of the history
 PLOT_HISTORY_FOLDER = './plot_history/'
 # this folder will contain the trained model
-NN_WEIGHTS = './nn_weights/'
+NN_WEIGHTS          = './nn_weights/'
 # this folder will contain the checkpoints
-NN_CHECKPOINTS = './nn_checkpoints/'
+NN_CHECKPOINTS      = './nn_checkpoints/'
 
 def create_folders():
     try:
@@ -89,7 +89,7 @@ def plot_history(h, net_name, save_plot=False):
 if __name__ == '__main__':
     create_folders()
 
-    model, net_name = my_model.oil_spill_net()
+    model, net_name = my_model.oil_spill_net_3()
     model.summary()
     
     if tf.config.list_physical_devices('GPU'):
