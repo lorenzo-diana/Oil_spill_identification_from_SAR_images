@@ -4,8 +4,11 @@ This repository contains an implementation of the CNN described in the paper [*O
 The paper describes a CNN to perform semantic segmentation of SAR images to enable early oil spill detection while maintaining a low number of parameters and a low-inference time.
 The CNN is able to identify five different classes: Sea, Oil Spill, Look-Alike, Ship, and Land.
 
-To train the model copy the original dataset images and labels as follow:
-(to see the dataset used, see the paper)
+The used dataset is described in subsection 4.1 of the above mentioned paper.
+The dataset can be requested at the following link: [*Oil Spill Detection Dataset*](https://m4d.iti.gr/oil-spill-detection-dataset/)
+
+To train the model setup the following folders tree and place the original dataset as follow:
+
 ```
 dataset
 ├── original_data
