@@ -106,6 +106,11 @@ if __name__ == "__main__":
     
     ORIGINAL_DATASET_FOLDER       = './dataset/original_data/'
     PREPROCESSED_DATASET_FOLDER   = './dataset/'
+
+    if os.path.isdir(ORIGINAL_DATASET_FOLDER) == False:
+        print("Dataset folder not found: "+ORIGINAL_DATASET_FOLDER)
+        print("Please ensure that the original dataset is located in the correct folder as described in the README file.")
+        exit(-1)
     
     # train folders
     TRAIN_ORIGINAL_LABEL_PATH     = ORIGINAL_DATASET_FOLDER + 'train/labels/'

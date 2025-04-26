@@ -1,3 +1,4 @@
+import random
 import numpy as np
 from PIL import Image
 import tensorflow as tf
@@ -5,9 +6,12 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.utils import Sequence
 
 class custom_image_generator_seg_multi_GPU(Sequence):
-    def __init__(self, input_file, bs):
+    def __init__(self, input_file, batch_size, shuffle_epoch, shuffle_batch, **kwargs):
+        super().__init__(**kwargs)
         self.in_file = input_file
-        self.batch_size = bs
+        self.batch_size = batch_size
+        self.shuffle_epoch = shuffle_epoch
+        self.shuffle_batch = shuffle_batch
     
     def __len__(self):
         return int(np.ceil(file_len(self.in_file) / float(self.batch_size)))
@@ -26,7 +30,12 @@ class custom_image_generator_seg_multi_GPU(Sequence):
         while len(images) < self.batch_size:
             line = f.readline()
             if line == "":
-                f.seek(0)
+                if self.shuffle_epoch: # shuffle the entire dataset
+                    f.close()
+                    file_shuffle(self.in_file)
+                    f = open(self.in_file, "r")
+                else:
+                    f.seek(0)
                 line = f.readline()
 
             line = line.strip()
@@ -44,12 +53,22 @@ class custom_image_generator_seg_multi_GPU(Sequence):
                 print('file label: ' + seg_image_folder + line.replace('jpg', 'png') + '.npy')
                 continue
         
+        if self.shuffle_batch: # shuffle the samples inside the current batch
+            zip_list = list(zip(images, labels))
+            random.shuffle(zip_list)
+            images, labels = zip(*zip_list)
+
         images = np.array(images)
         labels = np.array(labels)
         
         # return the batch to the calling function
         return (images, labels)
 
+
+def file_shuffle(file_name):
+    lines = open(file_name).readlines()
+    random.shuffle(lines)
+    open(file_name, 'w').writelines(lines)
 
 def file_len(name): # count only non-empty lines
     num_lines = 0

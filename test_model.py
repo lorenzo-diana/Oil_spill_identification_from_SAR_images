@@ -114,9 +114,9 @@ def test_multiclass_model(model, file_name, classes, show_plot=0, save_output=Fa
             continue
         img = preprocess_inputs(img)
 
-        if model.get_layer(index=0).input_shape[0][1:] != img.shape:
+        if model.get_layer(index=0).batch_shape[1:] != img.shape:
             print('ERROR!\nShape mismatch.')
-            print('NN-input shape is: '+str(model.get_layer(index=0).input_shape[0][0]))
+            print('NN-input shape is: '+str(model.get_layer(index=0).batch_shape[1:]))
             print('Input data shape is: '+str(img.shape))
             exit()
         # check that shape of input and label is square and channel last
@@ -126,17 +126,17 @@ def test_multiclass_model(model, file_name, classes, show_plot=0, save_output=Fa
         
         img_ready = np.expand_dims(img,0)
         
-        start_time = time.time()
+        start_time = time.time_ns()
         model_res = model.predict(img_ready)
-        end_time = time.time()
+        end_time = time.time_ns()
         
-        time_list.append(end_time - start_time)
+        time_list.append((end_time-start_time)/1000000000) # result is in seconds
         mean_time += time_list[-1]
         
         orig = out = (np.array(model_res)[0]).astype(np.float32)
 
         if save_output == True:
-            np.save(output_save+line, out)
+            np.save(OUTPUT_SAVE+line, out)
 
         out_i = np.argmax(out, -1) # out must be channel last
         new_out = np.zeros(out.shape, dtype=out.dtype)
@@ -145,7 +145,8 @@ def test_multiclass_model(model, file_name, classes, show_plot=0, save_output=Fa
                 new_out[i,j,out_i[i,j]] = 1
         out = new_out
         
-        plot_multiclass(img=img_plot, mask=mask, out=out, orig=orig, img_name=line, classes=classes, show_plot=show_plot)
+        if show_plot != 0:
+            plot_multiclass(img=img_plot, mask=mask, out=out, orig=orig, img_name=line, classes=classes, show_plot=show_plot)
 
         for i in range(num_classes):
             I, A, D, tp, fp, fn, tn = compute_metrics(out[..., i], mask[..., i])
@@ -205,10 +206,10 @@ def check_positive(value):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model_name', action='store', nargs=1, required=True, help='String - path to the .h5 model')
+    parser.add_argument('-m', '--model_name', action='store', nargs=1, required=True, help='String - path to the .keras model file')
     parser.add_argument('-n', '--num_images', action='store', nargs=1, required=True, type=check_positive ,help="Integer. Max number of images to test")
-    parser.add_argument('-p', '--plot', action='store', nargs=1, required=False, default=[0], type=int, choices=range(0, 3), help="Integer. Default 0. Generate the plot with input and output of the model for each output class. 0 do nothing, 1 to show the plots, or 2 to save the plots.")
-    parser.add_argument('-s', '--save_output', action='store_true', required=False, default=False, help="Bool. If specified, the network output is saved as numpy file.")
+    parser.add_argument('-p', '--plot', action='store', nargs=1, required=False, default=[0], type=int, choices=range(0, 3), help="Integer. Default 0. Generate the plot with input and output of the model for each output class. 0 do nothing, 1 to show the plots, or 2 to save the plots in folder: "+PATH_PLOT)
+    parser.add_argument('-s', '--save_output', action='store_true', required=False, default=False, help="Bool. If specified, the network output is saved as numpy file in folder: "+OUTPUT_SAVE)
     args = parser.parse_args()
 
     create_folders()

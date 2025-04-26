@@ -18,7 +18,7 @@ import oil_spill_model as my_model
 BATCH     = 4
 BATCH_VAL = 16
 lrate     = 0.002
-EPOCHS    = 50
+EPOCHS    = 5
 PATIENCE  = 10
 
 # this folder will contain the history of the trained model
@@ -44,32 +44,27 @@ def l_rate_decay(curr_epoch):
     return float(lrate*tf.math.pow((1-(curr_epoch/EPOCHS)), 0.9))
 
 def trainSegMulticlass(model, train_file, validation_file, model_name):
-    # read how many images we will use directly from input files
-    nb_train_samples = CG.file_len(train_file)
-    nb_validation_samples = CG.file_len(validation_file)
-
     list_metrics = ['categorical_accuracy', CG.keras_MIoU]
     loss_func = CG.categorical_focal_loss
     
     opt_func = Adam
-    opt = opt_func(lr = lrate, beta_1=0.9, beta_2=0.999)
+    opt = opt_func(learning_rate = lrate, beta_1=0.9, beta_2=0.999)
     model.compile(loss = loss_func, optimizer = opt, metrics = list_metrics)
 
-    x_train = CG.custom_image_generator_seg_multi_GPU(train_file, BATCH)
-    x_val = CG.custom_image_generator_seg_multi_GPU(validation_file, BATCH_VAL)
+    x_train = CG.custom_image_generator_seg_multi_GPU(input_file=train_file, batch_size=BATCH, shuffle_epoch=False, shuffle_batch=True) # shuffle_epoch can be set to False when fit(shuffle=True)
+    x_val = CG.custom_image_generator_seg_multi_GPU(input_file=validation_file, batch_size=BATCH_VAL, shuffle_epoch=False, shuffle_batch=True)  # shuffle_epoch can be set to False when fit(shuffle=True)
 
-    checkpoint = ModelCheckpoint(filepath = NN_CHECKPOINTS+'weight_seg_'+model_name+".hdf5", verbose = 1, save_best_only = True, monitor='val_loss', mode='min')
+    checkpoint = ModelCheckpoint(filepath = NN_CHECKPOINTS+'weight_seg_'+model_name+".keras", verbose = 1, save_best_only = True, monitor='val_loss', mode='min')
     eStop = EarlyStopping(patience = PATIENCE, verbose = 1, restore_best_weights = True, monitor='val_loss')
     
     l_rate_schedule = LearningRateScheduler(l_rate_decay)
 
-    history = model.fit(x_train, steps_per_epoch=nb_train_samples // BATCH, epochs = EPOCHS, validation_data = x_val, validation_steps = nb_validation_samples // BATCH_VAL, workers = 1, shuffle="batch", callbacks = [checkpoint, eStop, l_rate_schedule])
+    history = model.fit(x_train, steps_per_epoch=len(x_train), epochs = EPOCHS, validation_data = x_val, validation_steps = len(x_val), shuffle=True, callbacks = [checkpoint, eStop, l_rate_schedule])
 
     return history
 
 def plot_history(h, net_name, save_plot=False):
-    list_keys = list(h.keys())
-    list_keys = [s for s in list_keys if 'val_' not in s and 'lr' != s]
+    list_keys = [s for s in h.keys() if 'val_' not in s and 'learning_rate' != s]
     print('Ready to', 'plot' if save_plot==False else 'save', ':', list_keys)
     for key in list_keys:
         plt.figure(key)
@@ -109,7 +104,7 @@ if __name__ == '__main__':
     # name of the trained model
     namesession = time.strftime("%Y-%m-%d_%H-%M")+'_'+net_name
     h = trainSegMulticlass(model, path_input_images_train, path_output_images_validation, namesession)
-    model.save(NN_WEIGHTS+namesession+'.h5')
+    model.save(NN_WEIGHTS+namesession+'.keras')
     np.save(HISTORY_FOLDER+'h_'+namesession,h.history)
-    print('Net saved as: '+namesession+'.h5')
+    print('Net saved as: '+namesession+'.keras')
     plot_history(h.history, net_name, save_plot=True)
