@@ -104,8 +104,8 @@ if __name__ == "__main__":
 
     augment_test_data = False
     
-    ORIGINAL_DATASET_FOLDER       = './dataset/original_data/'
     PREPROCESSED_DATASET_FOLDER   = './dataset/'
+    ORIGINAL_DATASET_FOLDER       = PREPROCESSED_DATASET_FOLDER + 'original_data/'
 
     if os.path.isdir(ORIGINAL_DATASET_FOLDER) == False:
         print("Dataset folder not found: "+ORIGINAL_DATASET_FOLDER)

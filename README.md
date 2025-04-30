@@ -1,11 +1,10 @@
 # Oil spill identification from SAR images
 
-This repository contains an implementation of the CNN described in the paper [*Oil Spill Identification from SAR Images for Low Power Embedded Systems Using CNN*](https://www.mdpi.com/2072-4292/13/18/3606).\
+This repository contains the code to train and test the CNN described in the paper [*Oil Spill Identification from SAR Images for Low Power Embedded Systems Using CNN*](https://www.mdpi.com/2072-4292/13/18/3606).\
 The paper describes a CNN to perform semantic segmentation of SAR images to enable early oil spill detection while maintaining a low number of parameters and a low-inference time.
-The CNN is able to identify five different classes: Sea, Oil Spill, Look-Alike, Ship, and Land.
-
+The CNN is able to identify five different classes: Sea, Oil Spill, Look-Alike, Ship, and Land.\
 The used dataset is described in subsection 4.1 of the above mentioned paper.
-The dataset can be requested at the following link: [*Oil Spill Detection Dataset*](https://m4d.iti.gr/oil-spill-detection-dataset/)
+Instruction on how to obtain the dataset can be found at the following link: [*Oil Spill Detection Dataset*](https://m4d.iti.gr/oil-spill-detection-dataset/)
 
 # Requirements
 This code has been validated with python 3.12 and the following packages are required:
@@ -61,3 +60,6 @@ python3 test_model.py -h
 # Output example
 The following image (taken from the original paper) shows an example of CNN's input, ground truth, and output.
 ![Example of input, output, and ground truth of the CNN. Image taken from the original paper](https://www.mdpi.com/remotesensing/remotesensing-13-03606/article_deploy/html/images/remotesensing-13-03606-g004.png)
+
+# Note
+Due to copyright issues, the actual CNN model has not been uploaded to this repository. For more information, please contact the corresponding author of the above mentioned paper.
